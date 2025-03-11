@@ -1,0 +1,111 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.36.0.0
+Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: ee 13675113681@163.com, ee, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.36.0.0
+Toolchain Path:  D:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.36.0.0
+Dialog DLL:      DCM.DLL V1.17.3.0
+Target DLL:      UL2CM3.DLL V1.164.0.0
+Dialog DLL:      TCM.DLL V1.53.0.0
+ 
+<h2>Project:</h2>
+E:\Stored\Project\stm32\f103c8t6\learn.uvprojx
+Project File Date:  03/07/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARMCC\Bin'
+Build target 'Target 1'
+compiling main.c...
+.\INCLUDE\uart.h(16): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\time.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\tim.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\sys.h(65): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\motor.h(20): warning:  #1295-D: Deprecated declaration allMotorInit - give arg types
+  void allMotorInit();
+.\INCLUDE\motor.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\mg996r.h(6): warning:  #1295-D: Deprecated declaration mg996r_Init - give arg types
+  void mg996r_Init();
+.\INCLUDE\mg996r.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\led.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\beep.h(10): warning:  #1295-D: Deprecated declaration playTwinkle - give arg types
+  void playTwinkle();
+.\INCLUDE\beep.h(12): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\key.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\adc.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\test.h(28): warning:  #1295-D: Deprecated declaration motor_test_forward - give arg types
+  void motor_test_forward();
+.\INCLUDE\test.h(29): warning:  #1295-D: Deprecated declaration motor_test_back - give arg types
+  void motor_test_back();
+.\INCLUDE\test.h(45): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\esp8266.h(24): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\ctl.h(25): warning:  #1295-D: Deprecated declaration dat_test - give arg types
+  void dat_test();
+.\INCLUDE\ctl.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif
+.\INCLUDE\encoder.h(13): warning:  #1295-D: Deprecated declaration Encoder_Init - give arg types
+  void Encoder_Init();
+.\INCLUDE\encoder.h(14): warning:  #1295-D: Deprecated declaration readEncoder1 - give arg types
+  uint16_t readEncoder1();
+.\INCLUDE\encoder.h(15): warning:  #1295-D: Deprecated declaration readEncoder2 - give arg types
+  uint16_t readEncoder2();
+.\INCLUDE\74HC165.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+USER\main.c(243): warning:  #185-D: dynamic initialization in unreachable code
+  	_Bool round = 0; // 圈数
+USER\main.c(242): warning:  #177-D: variable "dat"  was declared but never referenced
+  	uint8_t dat;
+USER\main.c(243): warning:  #177-D: variable "round"  was declared but never referenced
+  	_Bool round = 0; // 圈数
+USER\main.c(27): warning:  #550-D: variable "STEP"  was set but never used
+  static uint8_t STEP = 0; // 步骤
+USER\main.c(28): warning:  #177-D: variable "STEP_WH"  was declared but never referenced
+  static uint8_t STEP_WH = 0; // 步骤完成状态
+USER\main.c(91): warning:  #177-D: function "key0_start"  was declared but never referenced
+  static void key0_start()
+USER\main.c(96): warning:  #177-D: function "key1_stop"  was declared but never referenced
+  static void key1_stop()
+USER\main.c: 30 warnings, 0 errors
+linking...
+Program Size: Code=6508 RO-data=344 RW-data=68 ZI-data=1284  
+FromELF: creating hex file...
+".\Objects\learn.axf" - 0 Error(s), 30 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.2.0.pack
+                Keil.STM32F1xx_DFP.2.2.0
+                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  D:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include
+
+<h2>Collection of Component Files used:</h2>
+Build Time Elapsed:  00:00:01
+</pre>
+</body>
+</html>
