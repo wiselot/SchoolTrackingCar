@@ -700,7 +700,7 @@ I (.\FWLIB\inc\stm32f10x_spi.h)(0x6795C2DC)
 I (.\FWLIB\inc\stm32f10x_tim.h)(0x6795C2DC)
 I (.\FWLIB\inc\stm32f10x_usart.h)(0x6795C2DC)
 I (.\FWLIB\inc\misc.h)(0x6795C2DC)
-F (.\USER\main.c)(0x67CA8E38)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\USER\main.c)(0x67D5150D)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (.\CMSIS\stm32f10x.h)(0x6795C2B7)
 I (.\CMSIS\core_cm3.h)(0x6795C254)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x6025237E)
@@ -732,7 +732,7 @@ I (.\FWLIB\inc\misc.h)(0x6795C2DC)
 I (.\INCLUDE\uart.h)(0x67BC434B)
 I (.\INCLUDE\time.h)(0x67B0585D)
 I (.\INCLUDE\tim.h)(0x67C5B17B)
-I (.\INCLUDE\motor.h)(0x67C7EAA1)
+I (.\INCLUDE\motor.h)(0x67D505AF)
 I (.\INCLUDE\sys.h)(0x67960DB4)
 I (.\INCLUDE\mg996r.h)(0x67C5BEEA)
 I (.\INCLUDE\led.h)(0x67B05D6D)
@@ -745,9 +745,9 @@ I (D:\Keil_v5\ARM\ARMCC\include\math.h)(0x60252378)
 I (.\INCLUDE\test.h)(0x67C6C415)
 I (.\INCLUDE\esp8266.h)(0x67CA7782)
 I (.\INCLUDE\debug.h)(0x67C06CEE)
-I (.\INCLUDE\ctl.h)(0x67C802F2)
+I (.\INCLUDE\ctl.h)(0x67D50461)
 I (.\INCLUDE\encoder.h)(0x67C6CFCB)
-I (.\INCLUDE\74HC165.h)(0x67CA4741)
+I (.\INCLUDE\74HC165.h)(0x67D4E46F)
 I (.\INCLUDE\binay.h)(0x67CA4809)
 F (.\INCLUDE\stm32f10x_conf.h)(0x6795C30A)()
 F (.\INCLUDE\stm32f10x_it.h)(0x6795C30B)()
@@ -755,7 +755,7 @@ F (.\INCLUDE\sys.h)(0x67960DB4)()
 F (.\INCLUDE\tim.h)(0x67C5B17B)()
 F (.\INCLUDE\time.h)(0x67B0585D)()
 F (.\INCLUDE\uart.h)(0x67BC434B)()
-F (.\INCLUDE\motor.h)(0x67C7EAA1)()
+F (.\INCLUDE\motor.h)(0x67D505AF)()
 F (.\INCLUDE\mg996r.h)(0x67C5BEEA)()
 F (.\INCLUDE\beep.h)(0x67B06D54)()
 F (.\INCLUDE\led.h)(0x67B05D6D)()
@@ -764,9 +764,9 @@ F (.\INCLUDE\adc.h)(0x67B835D8)()
 F (.\INCLUDE\test.h)(0x67C6C415)()
 F (.\INCLUDE\esp8266.h)(0x67CA7782)()
 F (.\INCLUDE\debug.h)(0x67C06CEE)()
-F (.\INCLUDE\ctl.h)(0x67C802F2)()
+F (.\INCLUDE\ctl.h)(0x67D50461)()
 F (.\INCLUDE\encoder.h)(0x67C6CFCB)()
-F (.\INCLUDE\74HC165.h)(0x67CA4741)()
+F (.\INCLUDE\74HC165.h)(0x67D4E46F)()
 F (.\INCLUDE\binay.h)(0x67CA4809)()
 F (.\LIB\dec.c)(0x67B0583A)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\dec.o --omf_browse .\objects\dec.crf --depend .\objects\dec.d)
 I (.\INCLUDE\time.h)(0x67B0585D)
@@ -891,7 +891,7 @@ I (.\FWLIB\inc\stm32f10x_tim.h)(0x6795C2DC)
 I (.\FWLIB\inc\stm32f10x_usart.h)(0x6795C2DC)
 I (.\FWLIB\inc\stm32f10x_wwdg.h)(0x6795C2DC)
 I (.\FWLIB\inc\misc.h)(0x6795C2DC)
-I (.\INCLUDE\motor.h)(0x67C7EAA1)
+I (.\INCLUDE\motor.h)(0x67D505AF)
 I (.\INCLUDE\sys.h)(0x67960DB4)
 I (.\INCLUDE\tim.h)(0x67C5B17B)
 F (.\LIB\mg996r.c)(0x67C5BF08)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\mg996r.o --omf_browse .\objects\mg996r.crf --depend .\objects\mg996r.d)
@@ -1048,7 +1048,7 @@ I (.\FWLIB\inc\stm32f10x_usart.h)(0x6795C2DC)
 I (.\FWLIB\inc\stm32f10x_wwdg.h)(0x6795C2DC)
 I (.\FWLIB\inc\misc.h)(0x6795C2DC)
 I (.\INCLUDE\time.h)(0x67B0585D)
-F (.\LIB\test.c)(0x67C683CD)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\test.o --omf_browse .\objects\test.crf --depend .\objects\test.d)
+F (.\LIB\test.c)(0x67D50DB8)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\test.o --omf_browse .\objects\test.crf --depend .\objects\test.d)
 I (.\INCLUDE\test.h)(0x67C6C415)
 I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (.\INCLUDE\debug.h)(0x67C06CEE)
@@ -1082,7 +1082,7 @@ I (.\FWLIB\inc\stm32f10x_wwdg.h)(0x6795C2DC)
 I (.\FWLIB\inc\misc.h)(0x6795C2DC)
 I (.\INCLUDE\esp8266.h)(0x67CA7782)
 I (.\INCLUDE\uart.h)(0x67BC434B)
-I (.\INCLUDE\motor.h)(0x67C7EAA1)
+I (.\INCLUDE\motor.h)(0x67D505AF)
 I (.\INCLUDE\sys.h)(0x67960DB4)
 F (.\LIB\esp8266.c)(0x67CA816B)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\esp8266.o --omf_browse .\objects\esp8266.crf --depend .\objects\esp8266.d)
 I (.\INCLUDE\esp8266.h)(0x67CA7782)
@@ -1118,8 +1118,8 @@ I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (.\INCLUDE\time.h)(0x67B0585D)
 I (D:\Keil_v5\ARM\ARMCC\include\string.h)(0x6025237E)
 I (.\INCLUDE\uart.h)(0x67BC434B)
-F (.\LIB\ctl.c)(0x67C81DED)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\ctl.o --omf_browse .\objects\ctl.crf --depend .\objects\ctl.d)
-I (.\INCLUDE\ctl.h)(0x67C802F2)
+F (.\LIB\ctl.c)(0x67D6913B)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\ctl.o --omf_browse .\objects\ctl.crf --depend .\objects\ctl.d)
+I (.\INCLUDE\ctl.h)(0x67D50461)
 I (.\CMSIS\stm32f10x.h)(0x6795C2B7)
 I (.\CMSIS\core_cm3.h)(0x6795C254)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x6025237E)
@@ -1148,15 +1148,17 @@ I (.\FWLIB\inc\stm32f10x_tim.h)(0x6795C2DC)
 I (.\FWLIB\inc\stm32f10x_usart.h)(0x6795C2DC)
 I (.\FWLIB\inc\stm32f10x_wwdg.h)(0x6795C2DC)
 I (.\FWLIB\inc\misc.h)(0x6795C2DC)
-I (.\INCLUDE\adc.h)(0x67B835D8)
+I (.\INCLUDE\74HC165.h)(0x67D4E46F)
+I (.\INCLUDE\sys.h)(0x67960DB4)
 I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (.\INCLUDE\mg996r.h)(0x67C5BEEA)
 I (.\INCLUDE\encoder.h)(0x67C6CFCB)
 I (.\INCLUDE\time.h)(0x67B0585D)
-I (.\INCLUDE\motor.h)(0x67C7EAA1)
-I (.\INCLUDE\sys.h)(0x67960DB4)
+I (.\INCLUDE\motor.h)(0x67D505AF)
 I (D:\Keil_v5\ARM\ARMCC\include\math.h)(0x60252378)
-F (.\LIB\encoder.c)(0x67C6BB50)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\encoder.o --omf_browse .\objects\encoder.crf --depend .\objects\encoder.d)
+I (.\INCLUDE\binay.h)(0x67CA4809)
+I (.\INCLUDE\led.h)(0x67B05D6D)
+F (.\LIB\encoder.c)(0x67D50D5F)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\encoder.o --omf_browse .\objects\encoder.crf --depend .\objects\encoder.d)
 I (.\INCLUDE\encoder.h)(0x67C6CFCB)
 I (.\CMSIS\stm32f10x.h)(0x6795C2B7)
 I (.\CMSIS\core_cm3.h)(0x6795C254)
@@ -1219,7 +1221,7 @@ I (.\INCLUDE\key.h)(0x67B06930)
 I (.\INCLUDE\encoder.h)(0x67C6CFCB)
 I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
 F (.\LIB\74HC165.c)(0x67C944EA)(--c99 -c --cpu Cortex-M3 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\FWLIB\inc -I .\USER -I .\INCLUDE-ID:\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="536" -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\74hc165.o --omf_browse .\objects\74hc165.crf --depend .\objects\74hc165.d)
-I (.\INCLUDE\74HC165.h)(0x67CA4741)
+I (.\INCLUDE\74HC165.h)(0x67D4E46F)
 I (.\CMSIS\stm32f10x.h)(0x6795C2B7)
 I (.\CMSIS\core_cm3.h)(0x6795C254)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x6025237E)

@@ -34,11 +34,10 @@ void mg996r_back10()
 
 #include "motor.h"
 
-uint16_t pwm_value = 100;
+uint16_t pwm_value = 800;
 
 void motor_test_forward()
 {
-	pwm_value = 120;
 	Motor_Forward(0,pwm_value);
 	Motor_Forward(1,pwm_value);
 	printf("Motor roll");

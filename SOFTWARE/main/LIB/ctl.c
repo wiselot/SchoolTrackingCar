@@ -1,273 +1,325 @@
 #include "ctl.h"
-#include "adc.h"
+#include "74HC165.h"
 #include "stdio.h"
 #include "mg996r.h"
 #include "encoder.h"
 #include "time.h"
 #include "motor.h"
 #include "math.h"
+#include "binay.h"
+#include "led.h"
 
-typedef struct
+// 步骤
+static uint8_t FLOW_STEP = 0;
+// 步骤状态
+static uint8_t STEP_STAT = 1;
+
+// 挡位
+#define STAT_N	0
+#define STAT_D	1
+#define STAT_R	-1
+static int8_t motorStatus = STAT_N;
+// 舵机转向
+static uint8_t ServoAngle = 45;
+// 电机转速设定
+static uint16_t motorLeft=0,motorRight=0;
+// 待调速度
+static uint16_t expSpeed = 200;
+
+#define CTL_LOOP_TICK	1
+
+// 初始化
+void Ctl_Init()
 {
-	float length; // 长度(cm)
-	int angle; // 竖直角度
-}_TRACE_DAT;
-
-static _TRACE_DAT TRACE_LINE_DAT[] = { \
 	
-	// 第一圈
-	// 起步直行
-	{75.3,-90},
-	// 直角弯后左侧直行
-	{81.6,0},
-	// 左上侧弯道
-	{ 2.7946325522712474, 28 },
-	{ 2.757643465259404, 6 },
-	{ 3.273784298626374, 15 },
-	{ 4.187668492542585, 22 },
-	{ 4.940366085010011, 31 },
-	{ 6.544552968336829, 40 },
-	{ 6.568095198244326, 55 },
-	{ 6.422568112837801, 68 },
-	{ 6.483614508214576, 75 },
-	// 左上侧直线
-	{26.1,90},
-	// 上侧中间弯道
-	{ 3.6673682572615514, 123 },
-	{ 4.073207352325772, 113 },
-	{ 4.202360810269012, 91 },
-	{ 4.075186304031254, 69 },
-	{ 4.091678900871729, 72 },
-	{ 4.197317100478623, 98 },
-	{ 4.1357572148492645, 122 },
-	{ 3.7803251034961756, 143 },
-	{ 2.800158675658948, 157 },
-	{ 2.5409064891322544, 151 },
-	{ 4.268336710400799, 129 },
-	{ 4.210504915777208, 97 },
-	{ 4.076391889593277, 69 },
-	{ 3.6883799954868346, 42 },
-	{ 2.6565621473712415, 19 },
-	{ 2.166092964343071, 18 },
-	{ 3.402999409257248, 39 },
-	{ 4.093076905689946, 61 },
-	{ 3.992277409956112, 68 },
-	// 上侧右侧直线
-	{30,90},
-	// 上侧右侧弯道
-	{ 4.5789932340310795, 105 },
-	{ 4.655338337203399, 106 },
-	{ 4.641257878112635, 116 },
-	{ 4.752519486004054, 125 },
-	{ 4.977282739789505, 136 },
-	{ 4.729198297165496, 145 },
-	{ 4.640258195161148, 153 },
-	{ 4.65328024119749, 163 },
-	{ 4.841339753901524, 174 },
-	// 右侧直线
-	{52.35,180},
-	// 右下侧弯道
-	{ 3.2818627938375933, -153 },
-	{ 3.001514095786669, -170 },
-	{ 2.5430687009183623, -162 },
-	{ 3.549710365753916, -156 },
-	{ 4.174048712243741, -151 },
-	{ 5.682396909338726, -139 },
-	{ 6.459528204994523, -128 },
-	{ 6.253971292798172, -116 },
-	{ 5.95964250615701, -108 },
-	// 下侧直线
-	{67.35,-90}
-	
-	// 第一圈完成
-};
-
-static int TRACE_DAT_LEN  = sizeof(TRACE_LINE_DAT)/sizeof(TRACE_LINE_DAT[0]);
-
-static int global_pwm = 0;
-static float linex = 0;
-
-static int D_angle;
-
-#define PWM_LINE_GLOB		500
-#define PWM_WAN_GLOB		200
-#define PWM_DOT_DOT			800
-#define CAR_WAN_MIN_R		13.9
-#define CAR_WAN_MIN_C		3.14*CAR_WAN_MIN_R*1.1
-#define PER_LINE_FOR		0.4
-#define PER_WAN_FOR			1
-
-static int t_abs(int t)
-{
-	return t>0?t:-t;
 }
 
-static int DAT_ANGLE_2_SERVO(int angle)
+// 舵机和电机控制
+void ServoMotorCtlLoop()
 {
-	if(angle>=0 && angle<=180)
-		angle-=45;
-	else if(angle<0 && angle>=-180)
-		angle+=135;
-	if(angle>90) 	angle = 90;
-	if(angle<0)		angle = 0;
-	return angle;
+	if(motorStatus==STAT_N) return;
+	
+	SET_ANGLE(ServoAngle);
+	
+	if(motorStatus==STAT_D){
+		Motor_Forward(1,motorLeft);
+		Motor_Forward(0,motorRight);
+	}
+	else if(motorStatus==STAT_R){
+		Motor_Backward(1,motorLeft);
+		Motor_Backward(0,motorRight);
+	}
+	else if(motorStatus==STAT_N){
+		Motor_Stop(0);
+		Motor_Stop(1);
+	}
+	
 }
 
-int PosFlagValue=(int)((LEFT_MAX+RIGHT_MAX-LEFT_THREASH-RIGHT_THREASH)/3.0f);
-
-int GetTraceDate(void)
+static uint8_t getBitCount(uint8_t c,_Bool bit)
 {
-	int Data_Out;//定义数据输出变量
-	int Left_AD,Right_AD,Mid_AD;//定义左右中传感器AD值变量
-	static char PosFlag=0;//定义传感器位置标志位，0认为传感器在黑线偏左位置，1认为小车在传感器偏右位置
-	
-	Left_AD=ADC_GetValue(0);
- 	Mid_AD=ADC_GetValue(1);
-	Right_AD=ADC_GetValue(2);
-	
-	Data_Out=(Left_AD-Right_AD+D_AD_VALUE);
-	if(Data_Out>PosFlagValue)
-	{
-		PosFlag=1;
-	}
-	else if(Data_Out<-PosFlagValue)
-	{
-		PosFlag=0;
-	}
-	if(Mid_AD<LEFT_THREASH)
-	{	
-		if(Data_Out>PosFlagValue)
-		{
-			Data_Out=(2*LEFT_MAX-Left_AD)*2-LEFT_SPAN;
-		}
-		else if((Data_Out<PosFlagValue)&&(PosFlag==1))
-		{
-			Data_Out=t_abs((2*LEFT_MAX-Left_AD)*2-LEFT_SPAN);
-		}
-		
-	} 
-	
-	if(Mid_AD<RIGHT_THREASH)
-	{	
-		if(Data_Out<-PosFlagValue)
-		{
-			Data_Out=(Right_AD-2*RIGHT_MAX)*2-RIGHT_SPAN;
-		}
-		else if((Data_Out>-PosFlagValue)&&(PosFlag==0))
-		{
-			Data_Out=-t_abs((Right_AD-2*RIGHT_MAX)*2-RIGHT_SPAN);
-		}
-	}
-	
-	printf("%d\r\n",Data_Out);
-	
-	return Data_Out;
+	uint8_t cru = 0;
+	for(uint8_t i=0;i<8;i++)
+		if(GET_BIT(c,i)==bit)
+			cru++;
+	return cru;
 }
 
-uint16_t adc0,adc1,adc2;
-
-float Forward_P=0.005,Forward_D=0.2;
-
-int Position_PID_Servo(int Encoder,int Target)
-{ 	
-	float Position_KP=Forward_P,Position_KI=0,Position_KD=Forward_D;//0.33
-	static float Bias,Pwm,Integral_bias,Last_Bias;
-	Bias=Encoder-Target;                                  //计算偏差
-	Integral_bias+=Bias;	                                 //求出偏差的积分
-	Pwm=Position_KP*Bias+Position_KI*Integral_bias+Position_KD*(Bias-Last_Bias);       //位置式PID控制器
-	Last_Bias=Bias;                                       //保存上一次偏差 
-	return Pwm;                                            //增量输出
+void TIM2_IRQHandler(void) {
+    if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
+			TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+			ServoMotorCtlLoop();
+		}
 }
 
-int Control_Servor_Angle(void)
+void TIM3_IRQHandler(void) {
+    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) {
+			TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		}
+}
+
+// 直弯岔道选择记忆
+/* 
+0: 待右转
+1: 待在上方岔道进内环
+2: 待在下方岔道右转出内环
+3: 待越过停止线
+4: 待右转
+5: 待在上方岔道进外环
+6: 待在下方岔道进外环
+7: 待在停止线停车
+*/
+static uint8_t exp_trace = 0;
+	
+// 直行:-1,右转:0,左转:1,停车:2
+static int8_t GetTraceWay(uint8_t tra)
 {
-	int Temp=0;//定义中间临时变量
-	int MID_AD=0;//定义寻线差值变量
-	int SERVOR_V=0;//定义控制舵机角度变量
-	static int Last_SERVOR_V=0;
-	adc1=ADC_GetValue(1);
-	if(adc1>1500)
-	{
-		adc0=ADC_GetValue(0);
-		adc2=ADC_GetValue(2);	
-		MID_AD=(adc1-adc2+D_AD_VALUE);
-		SERVOR_V=Position_PID_Servo(MID_AD,0);
-		if(SERVOR_V>190)	SERVOR_V=190;
-		else if(SERVOR_V<-190)	SERVOR_V=-190;	
+	/*
+	if(exp_trace%2==0){
+		LED1_ON;
 	}
-	else if(adc1<1500)
+	else{
+		LED1_OFF;
+	}
+	*/
+	// 0: 待右转,
+	if(exp_trace==0 || exp_trace==4)
 	{
-		adc0=ADC_GetValue(0);
-		adc2=ADC_GetValue(2);
-		Temp=adc0-adc2+D_AD_VALUE;
-		if(t_abs(Temp)>300)
-		{
-			if(Temp>0)
-			MID_AD=4800-Temp;
-			else 
-			{
-				MID_AD=-4800-Temp;
+		static _Bool tr_sl = 0;
+		static _Bool tr_sr = 0;
+		if(tr_sl==0){
+			if(tra>>4==0 || tra==0xff){
+				tr_sl=1;
+				if(tra>>4==0) tr_sr = 1;
+				return 0;
 			}
-			SERVOR_V=Position_PID_Servo(MID_AD,0);
-			if(SERVOR_V>190)	SERVOR_V=190;
-			else if(SERVOR_V<-190)	SERVOR_V=-190;
-			Last_SERVOR_V=SERVOR_V;
-		}	
-		else SERVOR_V=Last_SERVOR_V;
-		if((t_abs(Temp)<300)&&(adc1<400))
-		{
-			SERVOR_V=Last_SERVOR_V;
+			else{
+				return -1;
+			}
+		}
+		else{
+			// 回正
+			if(tr_sr==1){
+				if(tra==0xff)	tr_sr = 0;
+			}
+			else{
+				if(tra!=0xff){
+					exp_trace++;
+				}
+			}
+			return 0;
 		}
 	}
-	int angle = 45 - SERVOR_V;
-	if(angle>90) angle = 90;
-	if(angle<0) angle = 0;
+	// 1: 待在上方岔道进内环,5: 待在上方岔道进外环
+	else if(exp_trace==1||exp_trace==5){
+		// 上方岔道
+		static _Bool tr_sax = 0; // 等待过岔路口
+		if(tr_sax==0){
+			int8_t i = 7; // 这里用int8_t,不然减到-1会出问题，检查好久居然是这有问题...
+			uint8_t cnx = 0,cny = 0,cnz = 0;
+			while(i>=0 && GET_BIT(tra,i--)==0) cnx++;
+			i++;
+			while(i>=0 && GET_BIT(tra,i--)==1) cny++;
+			i++;
+			while(i>=0 && GET_BIT(tra,i--)==0) cnz++;
+			
+			if(cnx>=2 && cny>=1 && cnz>=2){	
+				tr_sax=1; // 待出岔道
+				
+				return exp_trace==1?0:-1;
+			}
+			else{
+				// 直行
+				return -1;
+			}
+		}
+		else{
+			// 待出岔道
+			static _Bool wait_dx = 0;
+			if(!wait_dx){
+				if(exp_trace==1 && tra==0xff){
+					wait_dx = 1;
+				}
+				else if(exp_trace==5 && tra==0xff){
+					wait_dx = 1;
+				}
+			}
+			else{
+				if(exp_trace==1 && (tra&0x0f)==0x0f && (tra>>4)!=0x0f){
+					exp_trace++;
+					return 0;
+				}
+				else if(exp_trace==5){
+					// 不做任何检测应该是能直接跑过去的
+					exp_trace++;
+					return -1;
+				}
+			}
+			return exp_trace==1?0:-1;
+		}
+	}
+	// 2: 待在下方岔道右转出内环
+	else if(exp_trace==2){
+		static _Bool truax = 0;
+		if(!truax){
+			if(tra==0x00){
+				truax = 1;
+				return 0;
+			}
+			return -1;
+		}
+		else{
+			static _Bool trubx = 0;
+			if(!trubx){
+				if(tra==0xff){
+					trubx = 1;
+				}
+				return 0;
+			}
+			else{
+				if(getBitCount(tra,0)>=5){
+					// 这里是回正判断
+					// 测试的时候发现边缘有细黑线和外部环境影响巡线，并且差不多回正扫到停止线,故直接检测停止线
+					LED1_ON;
+					exp_trace++;
+					return -1;
+				}
+				return 0;
+			}
+		}
+	}
+	// 3: 待越过停止线,7: 待在停止线停车
+	else if(exp_trace==3 || exp_trace==6)
+	{
+		// 根据实际调一下哈
+		if(exp_trace==3){
+			// 上面已经扫到停止线了，直接越过停止线应该不会导致乱跑，所以直接直行好了。
+			exp_trace++;
+			return -1;
+		}
+		else{
+			if(getBitCount(tra,0)>=5)
+				// 停车
+				return 2;
+		}
+	}
+	// 6: 待在下方岔道进外环
+	else if(exp_trace==4){
+		static _Bool tr_s = 0;
+		if(tr_s==0){
+			if(GET_BIT(tra,7)==0)
+				tr_s = 1;
+		}
+		else if(tr_s==1){
+			if(GET_BIT(tra,7)!=0)
+				exp_trace++;
+		}
+		return -1;
+	}
+}
+
+static uint8_t TRA2Angle(uint8_t tra){
+	// 偏到0xff,保证回正
+	static _Bool warnTrace;
+	if(tra==0xff)
+		return warnTrace==0?0:90;
+	else
+		warnTrace = ((tra&0x0f) - (tra>>4))>0;
+	uint16_t xsum = 0,xt=0;
+	for(uint8_t i=0;i<8;i++){
+		if(GET_BIT(tra,i)==0){
+			xsum += ((i+1)*9*1.3);
+			xt++;
+		}
+	}
+	uint8_t angle = xsum/xt;
+	if(angle>90)
+		angle=90;
+	// 急弯减速
+	static _Bool speed_reg = 0;
+	if(!speed_reg){
+		if(angle>80 || angle<10){
+			speed_reg = 1;
+			expSpeed*=0.7;
+		}
+	}
+	else if(speed_reg && angle>=80 && angle<=10){
+		speed_reg = 0;
+		expSpeed/=0.7;
+	}
 	return angle;
 }
 
-void single_trace_test()
-{
-	// 单巡线测试
-	int angle;
-	
-}
 
-void GetParament(void)
+// 循迹流程控制
+void TraceFlowCtlLoop()
 {
-	int DValue=0;
-	int Left_AD,Right_AD,Mid_AD;//定义左右中传感器AD值变量
+	motorStatus = STAT_D;
 	
-	static int LeftMax=0;
-	static int RightMax=0;
-	static int Left_Thersh=0;
-	static int Right_Thersh=0;
-	static int Left_Span=0;
-	static int Right_Span=0;
-	
-	
-	Right_AD=ADC_GetValue(0); 	//右传感器获取的AD值
-	Mid_AD=ADC_GetValue(1);	//中间传感器获取的AD值
-	Left_AD=ADC_GetValue(2);		//左传感器获取的AD值
-		
-	
-	if(Left_AD>LeftMax)	
+	while(1)
 	{
-		LeftMax=Left_AD;
-		Left_Thersh=Mid_AD;
-		Left_Span=(2*LeftMax-Left_AD)*2-(Left_AD-Right_AD+D_AD_VALUE);
+
+		uint8_t tra = Read_74HC165();
+#if 0
+		printf("%d\r\n",TRA2Angle(tra));
+		//ServoAngle = TRA2Angle(tra);
+		//ServoAngle = 90;
+		//motorLeft = 1000;
+		//motorRight = 1000;
+		
+		delay_ms(10);
+#endif
+		
+#if 1
+		int8_t way = GetTraceWay(tra);
+		
+		switch(way){
+			case -1:
+				// 直行
+				ServoAngle = TRA2Angle(tra);
+				float ratio = CAR_B*tan((double)(ServoAngle-45))/CAR_L;
+				motorLeft = expSpeed + expSpeed*ratio/2;
+				motorRight = expSpeed - expSpeed*ratio/2;
+			break;
+			case 0:
+				// 右转
+				ServoAngle = 90;
+				motorLeft = 300;
+				motorRight = 200;
+			break;
+			case 1:
+				// 左转
+				ServoAngle = 0;
+				motorLeft = 200;
+				motorRight = 300;
+			break;
+			case 2:
+				// 停车
+				motorStatus = STAT_N;
+			break;
+		}
+#endif
 		
 	}
-	if(Right_AD>RightMax)
-	{
-		RightMax=Right_AD;
-		Right_Thersh=Mid_AD;
-		Right_Span=(Right_AD-2*RightMax)*2-(Left_AD-Right_AD+D_AD_VALUE);	
-	}		
 	
-	
-	DValue=Right_AD-Left_AD;//差值，右传感器减左传感器
-	
-	
-	printf("Right_AD:%d Mid_AD:%d Left_AD:%d\r\n",Right_AD,Mid_AD,Left_AD);
-	printf("D_AD_VALUE:%d LeftMax:%d RightMax:%d Left_Thersh:%d Right_Thersh:%d Left_Span:%d Right_Span:%d\r\n",DValue,LeftMax,RightMax,Left_Thersh,Right_Thersh,Left_Span,Right_Span);
 }

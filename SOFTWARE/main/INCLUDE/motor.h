@@ -13,7 +13,7 @@
 #define FULL_SPEED_VAL	17
 
 // Öá¾à(mm)
-#define CAR_L 197
+#define CAR_L 143
 // ÂÖ¾à
 #define CAR_B	167
 
