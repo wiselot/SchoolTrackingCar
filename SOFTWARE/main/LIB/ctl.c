@@ -8,6 +8,7 @@
 #include "math.h"
 #include "binay.h"
 #include "led.h"
+#include "debug.h"
 
 // 步骤
 static uint8_t FLOW_STEP = 0;
@@ -23,7 +24,7 @@ static int8_t motorStatus = STAT_N;
 static uint8_t ServoAngle = 45;
 // 电机转速设定
 static uint16_t motorLeft=0,motorRight=0;
-// 待调速度
+// 待调直行速度
 static uint16_t expSpeed = 200;
 
 #define CTL_LOOP_TICK	1
@@ -72,9 +73,14 @@ void TIM2_IRQHandler(void) {
 		}
 }
 
+// 发送调试信息
+static _Bool sendSTAT = 1;
+static char sendDAT[128];
+
 void TIM3_IRQHandler(void) {
     if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) {
 			TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+			
 		}
 }
 
@@ -90,6 +96,7 @@ void TIM3_IRQHandler(void) {
 7: 待在停止线停车
 */
 static uint8_t exp_trace = 0;
+static uint8_t exp_fr = 0xff;
 	
 // 直行:-1,右转:0,左转:1,停车:2
 static int8_t GetTraceWay(uint8_t tra)
@@ -102,13 +109,15 @@ static int8_t GetTraceWay(uint8_t tra)
 		LED1_OFF;
 	}
 	*/
+	
 	// 0: 待右转,
 	if(exp_trace==0 || exp_trace==4)
 	{
+		//LED1_OFF;
 		static _Bool tr_sl = 0;
 		static _Bool tr_sr = 0;
 		if(tr_sl==0){
-			if(tra>>4==0 || tra==0xff){
+			if(tra>>4==0){
 				tr_sl=1;
 				if(tra>>4==0) tr_sr = 1;
 				return 0;
@@ -123,7 +132,8 @@ static int8_t GetTraceWay(uint8_t tra)
 				if(tra==0xff)	tr_sr = 0;
 			}
 			else{
-				if(tra!=0xff){
+				if(getBitCount(tra,0)>=2){ // 地面瓷砖上有黑线...
+					//LED1_ON;
 					exp_trace++;
 				}
 			}
@@ -132,6 +142,8 @@ static int8_t GetTraceWay(uint8_t tra)
 	}
 	// 1: 待在上方岔道进内环,5: 待在上方岔道进外环
 	else if(exp_trace==1||exp_trace==5){
+		if(exp_trace==5) LED1_ON;
+		expSpeed = 120;
 		// 上方岔道
 		static _Bool tr_sax = 0; // 等待过岔路口
 		if(tr_sax==0){
@@ -143,9 +155,9 @@ static int8_t GetTraceWay(uint8_t tra)
 			i++;
 			while(i>=0 && GET_BIT(tra,i--)==0) cnz++;
 			
-			if(cnx>=2 && cny>=1 && cnz>=2){	
+			if(cnx>=2 && cny>=1 && cnz>=2){
+				//LED1_ON;
 				tr_sax=1; // 待出岔道
-				
 				return exp_trace==1?0:-1;
 			}
 			else{
@@ -167,6 +179,7 @@ static int8_t GetTraceWay(uint8_t tra)
 			else{
 				if(exp_trace==1 && (tra&0x0f)==0x0f && (tra>>4)!=0x0f){
 					exp_trace++;
+					//LED0_ON;
 					return 0;
 				}
 				else if(exp_trace==5){
@@ -180,10 +193,12 @@ static int8_t GetTraceWay(uint8_t tra)
 	}
 	// 2: 待在下方岔道右转出内环
 	else if(exp_trace==2){
+		expSpeed = 200;
 		static _Bool truax = 0;
 		if(!truax){
 			if(tra==0x00){
 				truax = 1;
+				//LED1_OFF;
 				return 0;
 			}
 			return -1;
@@ -197,10 +212,10 @@ static int8_t GetTraceWay(uint8_t tra)
 				return 0;
 			}
 			else{
-				if(getBitCount(tra,0)>=5){
+				if(getBitCount(tra,0)>=1){
 					// 这里是回正判断
 					// 测试的时候发现边缘有细黑线和外部环境影响巡线，并且差不多回正扫到停止线,故直接检测停止线
-					LED1_ON;
+					//LED0_OFF;
 					exp_trace++;
 					return -1;
 				}
@@ -208,32 +223,29 @@ static int8_t GetTraceWay(uint8_t tra)
 			}
 		}
 	}
-	// 3: 待越过停止线,7: 待在停止线停车
+	// 3: 待越过停止线,6: 待在停止线停车
 	else if(exp_trace==3 || exp_trace==6)
 	{
+		LED1_OFF;
 		// 根据实际调一下哈
 		if(exp_trace==3){
 			// 上面已经扫到停止线了，直接越过停止线应该不会导致乱跑，所以直接直行好了。
+			//LED1_OFF;
 			exp_trace++;
 			return -1;
 		}
 		else{
-			if(getBitCount(tra,0)>=5)
+			LED1_ON;
+			if(getBitCount(tra,0)>=4)
 				// 停车
 				return 2;
 		}
 	}
-	// 6: 待在下方岔道进外环
+	// 4: 待在下方岔道进外环
 	else if(exp_trace==4){
-		static _Bool tr_s = 0;
-		if(tr_s==0){
-			if(GET_BIT(tra,7)==0)
-				tr_s = 1;
-		}
-		else if(tr_s==1){
-			if(GET_BIT(tra,7)!=0)
-				exp_trace++;
-		}
+		// 测试的时候是可以直接过去的，不会左转(还需要再确认),所以就不管了
+		exp_trace++;
+		// 代码结构不改了。。
 		return -1;
 	}
 }
@@ -287,6 +299,10 @@ void TraceFlowCtlLoop()
 		//motorLeft = 1000;
 		//motorRight = 1000;
 		
+		//SET_ANGLE(90);
+		//Motor_Forward(1,1000);
+		//Motor_Forward(0,100);
+		//Motor_Stop(0);
 		delay_ms(10);
 #endif
 		
@@ -304,14 +320,14 @@ void TraceFlowCtlLoop()
 			case 0:
 				// 右转
 				ServoAngle = 90;
-				motorLeft = 300;
-				motorRight = 200;
+				motorLeft = 1000;
+				motorRight = 100;
 			break;
 			case 1:
 				// 左转
 				ServoAngle = 0;
-				motorLeft = 200;
-				motorRight = 300;
+				motorLeft = 100;
+				motorRight = 1000;
 			break;
 			case 2:
 				// 停车
