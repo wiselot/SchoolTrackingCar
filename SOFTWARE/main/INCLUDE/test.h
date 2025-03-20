@@ -22,7 +22,7 @@ void mg996r_foward10();
 void mg996r_back10();
 
 #endif
-#define MOTOR_TEST
+//#define MOTOR_TEST
 #ifdef MOTOR_TEST
 
 void motor_test_forward();

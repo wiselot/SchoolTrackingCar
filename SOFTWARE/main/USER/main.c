@@ -22,7 +22,7 @@
 
 const char * _TAG = "MAIN";
 // 0 wifi直接跳过初始化，省时间,1 初始化忽略报错,2 初始化报错退出
-#define WIFI_INIT_LEVEL	2
+#define WIFI_INIT_LEVEL	0
 
 int main()
 {
@@ -114,12 +114,8 @@ int main()
 	}
 	
 #endif
-	TraceFlowCtlLoop();
-	
-	while(1){
-		
-		delay_ms(20);
-	}
+	//TraceFlowCtlLoop();
+	while(1) delay_ms(10);
 
 	return 0;
 }
