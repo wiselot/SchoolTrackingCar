@@ -109,12 +109,14 @@ static int8_t GetTraceWay(uint8_t tra)
 	// 0: 待右转,
 	if(exp_trace==0 || exp_trace==4)
 	{
+		expSpeed = 200;
 		if(exp_trace==4) LED1_ON;
 		static _Bool tr_sl = 0;
 		static _Bool tr_sr = 0;
 		if(tr_sl==0){
 			if(tra>>4==0){
 				tr_sl=1;
+				LED0_ON;
 				if(tra>>4==0) tr_sr = 1;
 				return 0;
 			}
@@ -128,8 +130,9 @@ static int8_t GetTraceWay(uint8_t tra)
 				if(tra==0xff)	tr_sr = 0;
 			}
 			else{
-				if(getBitCount(tra,0)>=2){ // 地面瓷砖上有黑线...
+				if(((~tra)&0x0f)==0x00&&((~tra)&0xf0)!=0x00){ // 地面瓷砖上有黑线...
 					exp_trace++;
+					LED0_OFF;
 					// 有复用地方的标志位要置0
 					tr_sl = 0;
 					tr_sr = 0;
@@ -315,7 +318,7 @@ void TraceFlowCtlLoop()
 			// 左转
 			ServoAngle = 0;
 			motorLeft = 100;
-			motorRight = 700;
+			motorRight = 7S00;
 		break;
 		case 2:
 			// 停车
